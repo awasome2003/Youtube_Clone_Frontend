@@ -12,7 +12,7 @@ const VideoCard = ({ video, fetchVideos }) => {
     e.stopPropagation();
     try {
       const res = await axios.patch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${video._id}/like`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${video._id}/like`,
         {},
         {
           headers: {
@@ -36,7 +36,7 @@ const VideoCard = ({ video, fetchVideos }) => {
     e.stopPropagation();
     try {
       const res = await axios.patch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${video._id}/dislike`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${video._id}/dislike`,
         {},
         {
           headers: {
@@ -60,7 +60,7 @@ const VideoCard = ({ video, fetchVideos }) => {
     e.stopPropagation();
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/save`,
+        `${import.meta.env.VITE_API_URL}/api/videos/save`,
         { videoId: video._id },
         {
           headers: {
@@ -92,7 +92,7 @@ const VideoCard = ({ video, fetchVideos }) => {
           <img
             src={
               video.thumbnailUrl
-                ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${video.thumbnailUrl}`
+                ? `${import.meta.env.VITE_API_URL}${video.thumbnailUrl}`
                 : "/default-thumbnail.jpg"
             }
             alt={video.title}

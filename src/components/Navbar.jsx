@@ -84,7 +84,7 @@ const Navbar = () => {
                 >
                   <img
                     src={user.avatar && !user.avatar.startsWith('/default') 
-                      ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${user.avatar}` 
+                      ? `${import.meta.env.VITE_API_URL}${user.avatar}` 
                       : "https://via.placeholder.com/32"
                     }
                     alt="User"

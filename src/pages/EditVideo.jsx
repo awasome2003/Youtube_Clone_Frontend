@@ -28,7 +28,7 @@ const EditVideo = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${videoId}`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${videoId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -107,7 +107,7 @@ const EditVideo = () => {
       }
 
       await axios.patch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${videoId}`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${videoId}`,
         videoData,
         {
           headers: {
@@ -134,7 +134,7 @@ const EditVideo = () => {
 
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${videoId}/delete`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${videoId}/delete`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -188,7 +188,7 @@ const EditVideo = () => {
               <div className="bg-gray-100 rounded-lg p-4">
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Video Preview</h3>
                 <video
-                  src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${videoId}/stream`}
+                  src={`${import.meta.env.VITE_API_URL}/api/videos/${videoId}/stream`}
                   controls
                   className="w-full max-w-md mx-auto rounded-lg"
                 />
@@ -293,8 +293,8 @@ const EditVideo = () => {
                   type="submit"
                   disabled={isSubmitting}
                   className={`flex-1 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${isSubmitting
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                     }`}
                 >
                   {isSubmitting ? (

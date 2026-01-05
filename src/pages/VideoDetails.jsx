@@ -14,13 +14,13 @@ const VideoDetails = () => {
   const [comments, setComments] = useState([]);
   const { user, token } = useAuth();
 
-  const videoUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${id}/stream`;
+  const videoUrl = `${import.meta.env.VITE_API_URL}/api/videos/${id}/stream`;
 
   const fetchVideo = async () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${id}`
+        `${import.meta.env.VITE_API_URL}/api/videos/${id}`
       );
       setVideo(res.data.data);
       setError(null);
@@ -35,7 +35,7 @@ const VideoDetails = () => {
   const fetchComments = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/comments/video/${id}`
+        `${import.meta.env.VITE_API_URL}/api/comments/video/${id}`
       );
       setComments(res.data.data || []);
     } catch (err) {
@@ -93,7 +93,7 @@ const VideoDetails = () => {
 
     try {
       const res = await axios.patch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${id}/like`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${id}/like`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -119,7 +119,7 @@ const VideoDetails = () => {
 
     try {
       const res = await axios.patch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/${id}/dislike`,
+        `${import.meta.env.VITE_API_URL}/api/videos/${id}/dislike`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -145,7 +145,7 @@ const VideoDetails = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/save`,
+        `${import.meta.env.VITE_API_URL}/api/videos/save`,
         { videoId: id },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -170,7 +170,7 @@ const VideoDetails = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/subscriptions/subscribe`,
+        `${import.meta.env.VITE_API_URL}/api/subscriptions/subscribe`,
         { userId: video.userId._id },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -194,7 +194,7 @@ const VideoDetails = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/subscriptions/unsubscribe`,
+        `${import.meta.env.VITE_API_URL}/api/subscriptions/unsubscribe`,
         { userId: video.userId._id },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -224,7 +224,7 @@ const VideoDetails = () => {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/comments`,
+        `${import.meta.env.VITE_API_URL}/api/comments`,
         { videoId: id, content: newComment },
         {
           headers: { Authorization: `Bearer ${token}` },

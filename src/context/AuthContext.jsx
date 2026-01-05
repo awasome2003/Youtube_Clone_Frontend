@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
           // Verify token with backend
           const res = await axios.get(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/me`,
+            `${import.meta.env.VITE_API_URL}/api/auth/me`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/login`,
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
           email,
           password,
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
         username,
         email,
         password,
@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("accessToken", res.data.accessToken);
       localStorage.setItem("refreshToken", res.data.refreshToken);
       localStorage.setItem("user", JSON.stringify(res.data.data.user));
-      
+
       setToken(res.data.accessToken);
       setUser(res.data.data.user);
 
@@ -133,14 +133,14 @@ export const AuthProvider = ({ children }) => {
         throw new Error("No refresh token available");
       }
 
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/refresh-token`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/refresh-token`, {
         refreshToken,
       });
 
       const newAccessToken = res.data.accessToken;
       localStorage.setItem("accessToken", newAccessToken);
       setToken(newAccessToken);
-      
+
       return newAccessToken;
     } catch (error) {
       console.error("Token refresh failed:", error);

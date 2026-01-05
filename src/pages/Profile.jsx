@@ -41,7 +41,7 @@ const Profile = () => {
       
       // Load user profile
       const profileResponse = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/${userId}`,
+        `${import.meta.env.VITE_API_URL}/api/users/${userId}`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         }
@@ -73,7 +73,7 @@ const Profile = () => {
   const loadUserVideos = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/${userId}/videos`,
+        `${import.meta.env.VITE_API_URL}/api/users/${userId}/videos`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         }
@@ -88,7 +88,7 @@ const Profile = () => {
   const loadUserSubscriptions = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/${userId}/subscriptions`,
+        `${import.meta.env.VITE_API_URL}/api/users/${userId}/subscriptions`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         }
@@ -103,7 +103,7 @@ const Profile = () => {
   const loadUserSavedVideos = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/${userId}/saved`,
+        `${import.meta.env.VITE_API_URL}/api/users/${userId}/saved`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         }
@@ -183,7 +183,7 @@ const Profile = () => {
       // Update profile info if there are changes
       if (Object.keys(profileData).length > 0) {
         await axios.patch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/me`,
+          `${import.meta.env.VITE_API_URL}/api/users/me`,
           profileData,
           {
             headers: {
@@ -200,7 +200,7 @@ const Profile = () => {
         formData.append('avatar', avatarFile);
         
         await axios.patch(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/users/avatar`,
+          `${import.meta.env.VITE_API_URL}/api/users/avatar`,
           formData,
           {
             headers: {
@@ -221,7 +221,7 @@ const Profile = () => {
       if (currentUser && currentUser._id === userId) {
         // Refresh user data in auth context
         const updatedUserResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/me`,
+          `${import.meta.env.VITE_API_URL}/api/auth/me`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -277,7 +277,7 @@ const Profile = () => {
             <img
               src={avatarPreview || 
                 (profileUser.avatar && !profileUser.avatar.startsWith('/default') 
-                  ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${profileUser.avatar}` 
+                  ? `${import.meta.env.VITE_API_URL}${profileUser.avatar}` 
                   : profileUser.avatar)
                 || "https://via.placeholder.com/100x100"
               }
@@ -506,7 +506,7 @@ const Profile = () => {
                     <div key={sub._id} className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                       <img
                         src={sub.avatar && !sub.avatar.startsWith('/default') 
-                          ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${sub.avatar}` 
+                          ? `${import.meta.env.VITE_API_URL}${sub.avatar}` 
                           : "https://via.placeholder.com/40x40"
                         }
                         alt={sub.username}

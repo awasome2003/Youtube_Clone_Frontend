@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import VideoCard from "../components/VideoCard";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
@@ -24,7 +25,7 @@ const Home = () => {
         limit: limit,
       };
 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos`, {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/videos`, {
         params,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

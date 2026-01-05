@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const UploadVideo = () => {
   const [formData, setFormData] = useState({
@@ -93,7 +94,7 @@ const UploadVideo = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/videos/upload`,
+        `${import.meta.env.VITE_API_URL}/api/videos/upload`,
         formDataToSend,
         {
           headers: {

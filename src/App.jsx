@@ -16,27 +16,7 @@ import Navbar from "./components/Navbar";
 import axios from 'axios';
 
 function AppContent() {
-  const { user, login } = useAuth();
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token && !user) {
-      // Verify token and get user info
-      axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(response => {
-        if (response.data.success) {
-          login(response.data.data.user, token, localStorage.getItem('refreshToken'));
-        }
-      })
-      .catch(error => {
-        console.error('Token verification failed:', error);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-      });
-    }
-  }, [login, user]);
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,12 +29,13 @@ function AppContent() {
           <Route path="/video/:id" element={<VideoDetails />} />
           <Route path="/video/:id/edit" element={<EditVideo />} />
           <Route path="/profile/:userId" element={<Profile />} />
-          <Route path="/upload" element={<ProtectedRoute><UploadVideo /></ProtectedRoute>} />
+          <Route path="/upload" element={<UploadVideo />} />
         </Routes>
       </main>
     </div>
   );
 }
+
 
 function App() {
   return (
