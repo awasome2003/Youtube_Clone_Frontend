@@ -11,6 +11,7 @@ import UploadVideo from "./pages/UploadVideo";
 import Profile from "./pages/Profile";
 import EditVideo from "./pages/EditVideo";
 import Search from "./pages/Search";
+import LikedVideos from "./pages/LikedVideos";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
@@ -39,6 +40,9 @@ function AppContent() {
               </Route>
               <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/search" element={<Search />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/liked-videos" element={<LikedVideos />} />
+              </Route>
             </Routes>
           </div>
         </main>

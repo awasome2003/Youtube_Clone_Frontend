@@ -18,7 +18,7 @@ const Sidebar = ({ isOpen }) => {
         { icon: History, label: "History", path: "/history" },
         { icon: PlaySquare, label: "Your videos", path: user ? `/profile/${user._id}` : "/login" },
         { icon: Clock, label: "Watch later", path: "/watch-later" },
-        { icon: ThumbsUp, label: "Liked videos", path: "/liked" },
+        { icon: ThumbsUp, label: "Liked videos", path: "/liked-videos" },
     ];
 
     const exploreLinks = [
@@ -32,8 +32,8 @@ const Sidebar = ({ isOpen }) => {
         <Link
             to={path}
             className={`flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 group ${active
-                    ? "bg-gray-100 font-semibold text-black"
-                    : "text-gray-700 hover:bg-gray-100"
+                ? "bg-gray-100 font-semibold text-black"
+                : "text-gray-700 hover:bg-gray-100"
                 }`}
         >
             <Icon
