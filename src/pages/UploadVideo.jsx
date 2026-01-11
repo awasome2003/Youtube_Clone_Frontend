@@ -1,327 +1,173 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Upload, X, FileVideo, Info, ChevronRight, CheckCircle2 } from "lucide-react";
 
 const UploadVideo = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    tags: "",
-  });
+  const [formData, setFormData] = useState({ title: "", description: "", tags: "" });
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
-  
-  const { token } = useAuth();
+  const [step, setStep] = useState(1); // 1: Select, 2: Details, 3: Processing
+
+  const { token, user } = useAuth();
   const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // Validate file type
-      const allowedTypes = ["video/mp4", "video/mov", "video/avi", "video/mkv"];
-      if (!allowedTypes.includes(selectedFile.type)) {
-        toast.error("Please upload a valid video file (MP4, MOV, AVI, MKV)");
-        return;
-      }
-
-      // Validate file size (max 100MB)
-      if (selectedFile.size > 100 * 1024 * 1024) {
-        toast.error("Video file size must be less than 100MB");
-        return;
-      }
-
+      if (selectedFile.size > 100 * 1024 * 1024) return toast.error("Max 100MB allowed");
       setFile(selectedFile);
-      
-      // Create preview URL for video
-      const url = URL.createObjectURL(selectedFile);
-      setPreviewUrl(url);
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+      setFormData(prev => ({ ...prev, title: selectedFile.name.split('.').slice(0, -1).join('.') }));
+      setStep(2);
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const validateForm = () => {
-    if (!formData.title.trim()) {
-      toast.error("Title is required");
-      return false;
-    }
-
-    if (formData.title.length > 100) {
-      toast.error("Title must be less than 100 characters");
-      return false;
-    }
-
-    if (formData.description.length > 5000) {
-      toast.error("Description must be less than 5000 characters");
-      return false;
-    }
-
-    if (!file) {
-      toast.error("Please select a video file to upload");
-      return false;
-    }
-
-    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.title.trim()) return toast.error("Title is required");
 
-    if (!validateForm()) {
-      return;
-    }
-
-    const formDataToSend = new FormData();
-    formDataToSend.append("video", file);
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("userId", JSON.parse(localStorage.getItem("user"))._id);
-    formDataToSend.append("tags", formData.tags);
+    const data = new FormData();
+    data.append("video", file);
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("userId", user._id);
+    data.append("tags", formData.tags);
 
     setIsSubmitting(true);
-    setProgress(0);
+    setStep(3);
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/videos/upload`,
-        formDataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            const progress = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setProgress(progress);
-          },
-        }
-      );
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/videos/upload`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+        onUploadProgress: (p) => setProgress(Math.round((p.loaded * 100) / p.total))
+      });
 
-      if (response.data.success) {
-        toast.success("Video uploaded successfully!");
-        
-        // Navigate to the uploaded video's details page
-        setTimeout(() => {
-          navigate(`/video/${response.data.data.id}`);
-        }, 1000);
-      } else {
-        toast.error(response.data.message || "Upload failed");
+      if (res.data.success) {
+        toast.success("Uploaded!");
+        setTimeout(() => navigate(`/video/${res.data.data.id}`), 1000);
       }
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast.error(
-        error.response?.data?.message || 
-        error.response?.data?.error || 
-        "Failed to upload video. Please try again."
-      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Upload failed");
+      setStep(2);
     } finally {
       setIsSubmitting(false);
-      setProgress(0);
     }
-  };
-
-  const handleCancel = () => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    navigate("/");
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Upload Video</h1>
-            <p className="text-gray-600 mb-6">Share your video with the world</p>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Video Preview Section */}
-              {previewUrl && (
-                <div className="bg-gray-100 rounded-lg p-4">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Video Preview</h3>
-                  <video
-                    src={previewUrl}
-                    controls
-                    className="w-full max-w-md mx-auto rounded-lg"
-                  />
-                </div>
-              )}
-
-              {/* File Upload Section */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-red-400 transition-colors duration-200">
-                <input
-                  type="file"
-                  id="video-upload"
-                  accept="video/mp4,video/mov,video/avi,video/mkv"
-                  onChange={handleFileChange}
-                  className="hidden"
-                  disabled={isSubmitting}
-                />
-                <label htmlFor="video-upload" className="cursor-pointer">
-                  <div className="flex flex-col items-center justify-center">
-                    <svg
-                      className="w-12 h-12 text-gray-400 mb-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    <p className="text-lg font-medium text-gray-900">
-                      {file ? file.name : "Click to upload video"}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      MP4, MOV, AVI, or MKV (MAX. 100MB)
-                    </p>
-                  </div>
-                </label>
-                {file && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    Selected: {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
-                  </p>
-                )}
-              </div>
-
-              {/* Title Field */}
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Title *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className="input"
-                  placeholder="Add a title that describes your video"
-                  maxLength={100}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.title.length}/100 characters
-                </p>
-              </div>
-
-              {/* Description Field */}
-              <div>
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  rows={4}
-                  className="textarea"
-                  placeholder="Tell viewers about your video"
-                  maxLength={5000}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.description.length}/5000 characters
-                </p>
-              </div>
-
-              {/* Tags Field */}
-              <div>
-                <label
-                  htmlFor="tags"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Tags
-                </label>
-                <input
-                  type="text"
-                  id="tags"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className="input"
-                  placeholder="Add tags separated by commas (e.g., tutorial, coding, react)"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Separate tags with commas. Example: tutorial, coding, react
-                </p>
-              </div>
-
-              {/* Progress Bar */}
-              {isSubmitting && (
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>Uploading...</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-red-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex space-x-4 pt-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !file}
-                  className={`flex-1 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-                    isSubmitting || !file
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center">
-                      <span className="spinner mr-2"></span>
-                      Uploading...
-                    </span>
-                  ) : (
-                    "Upload Video"
-                  )}
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  disabled={isSubmitting}
-                  className="flex-1 py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+    <div className="max-w-5xl mx-auto py-10 px-4">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden min-h-[600px] flex flex-col">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h1 className="text-xl font-bold flex items-center gap-2">
+            {step === 1 && "Upload videos"}
+            {step === 2 && formData.title}
+            {step === 3 && "Processing..."}
+          </h1>
+          <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <X size={24} className="text-gray-500" />
+          </button>
         </div>
+
+        {/* content */}
+        <div className="flex-1 flex flex-col lg:flex-row">
+          {step === 1 ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-10 text-center animate-fade-in">
+              <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center mb-8">
+                <Upload size={64} className="text-gray-400" />
+              </div>
+              <h3 className="text-xl font-medium mb-2">Drag and drop video files to upload</h3>
+              <p className="text-gray-500 mb-8 max-w-sm">Your videos will be private until you publish them.</p>
+              <input type="file" id="video-input" hidden accept="video/*" onChange={handleFileChange} />
+              <label htmlFor="video-input" className="px-6 py-2.5 bg-blue-600 text-white rounded-full font-bold text-sm cursor-pointer hover:bg-blue-700 transition-colors uppercase tracking-wide">
+                Select Files
+              </label>
+            </div>
+          ) : step === 2 ? (
+            <div className="flex-1 flex flex-col lg:flex-row p-6 gap-8 animate-fade-in">
+              <div className="flex-1 space-y-6">
+                <h2 className="text-2xl font-bold">Details</h2>
+                <div className="space-y-4">
+                  <div className="relative group">
+                    <label className="text-xs font-bold text-gray-500 absolute top-2 left-3">Title (required)</label>
+                    <input
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full pt-7 pb-2 px-3 border border-gray-300 rounded focus:border-blue-500 focus:outline-none text-[15px]"
+                    />
+                  </div>
+                  <div className="relative group">
+                    <label className="text-xs font-bold text-gray-500 absolute top-2 left-3">Description</label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      rows={6}
+                      className="w-full pt-7 pb-2 px-3 border border-gray-300 rounded focus:border-blue-500 focus:outline-none text-[15px] resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full lg:w-80 flex flex-col gap-4">
+                <div className="bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
+                  <video src={previewUrl} className="w-full aspect-video bg-black" />
+                  <div className="p-3 bg-gray-100">
+                    <div className="text-[11px] text-gray-500 uppercase font-bold mb-1">Video Link</div>
+                    <div className="text-blue-600 text-sm truncate cursor-pointer hover:underline">Processing link...</div>
+                  </div>
+                </div>
+                <div className="text-gray-500 text-sm flex items-start gap-2">
+                  <Info size={16} className="shrink-0 mt-0.5" />
+                  <p>While the video is processing, you can edit the details. We'll notify you when it's done.</p>
+                </div>
+                <div className="flex-1 flex flex-col justify-end">
+                  <button onClick={handleSubmit} className="w-full py-2.5 bg-blue-600 text-white rounded-md font-bold text-sm hover:bg-blue-700">
+                    NEXT
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center p-10 animate-fade-in">
+              <div className="w-64 h-2 bg-gray-100 rounded-full overflow-hidden mb-6 relative">
+                <div
+                  className="absolute inset-y-0 left-0 bg-blue-600 transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Uploading: {progress}%</h3>
+              <p className="text-gray-500">Please keep this window open until upload is complete.</p>
+              {progress === 100 && (
+                <div className="mt-8 flex flex-col items-center gap-2 text-green-600 animate-in zoom-in">
+                  <CheckCircle2 size={48} />
+                  <span className="font-bold">Finalizing...</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Footer Steps */}
+        {step > 1 && (
+          <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <div className={`w-3 h-3 rounded-full ${step === 2 ? 'bg-blue-600' : 'bg-green-600'}`} />
+              <div className={`w-12 h-0.5 ${step === 3 ? 'bg-blue-600' : 'bg-gray-200'}`} />
+              <div className={`w-3 h-3 rounded-full ${step === 3 ? 'bg-blue-600' : 'bg-gray-200'}`} />
+            </div>
+            <div className="text-sm font-bold text-gray-500 flex items-center gap-2">
+              <span>{step === 2 ? "Details" : "Processing"}</span>
+              <ChevronRight size={16} />
+              <span className="opacity-50">Publish</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

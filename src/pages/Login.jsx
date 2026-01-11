@@ -1,14 +1,13 @@
-// src/pages/Login.jsx
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { Video, ShieldCheck } from "lucide-react";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,112 +23,94 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
     try {
       await login(formData.email, formData.password);
       navigate(location.state?.from || "/", { replace: true });
     } catch (err) {
       setError(err?.message || "Invalid email or password");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      {/* Left branding section */}
-      <div className="hidden lg:flex flex-col justify-center px-20 bg-gradient-to-br from-red-600 to-red-800 text-white">
-        <h1 className="text-4xl font-bold mb-4">Welcome Back</h1>
-        <p className="text-lg text-red-100 max-w-md">
-          Sign in to upload videos, manage your channel, and explore content from
-          creators around the world.
-        </p>
-      </div>
+    <div className="min-h-[90vh] flex items-center justify-center p-4 bg-white">
+      <div className="w-full max-w-[450px] border border-gray-200 rounded-lg p-8 sm:p-10 shadow-sm animate-fade-in">
+        {/* Logo and Header */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="flex items-center gap-1 mb-2">
+            <Video size={32} fill="red" stroke="red" />
+            <span className="text-2xl font-bold tracking-tighter text-gray-900">MyTube</span>
+          </div>
+          <h1 className="text-2xl font-semibold text-gray-900 mt-2">Sign in</h1>
+          <p className="text-gray-600 mt-1">to continue to MyTube</p>
+        </div>
 
-      {/* Right form section */}
-      <div className="flex items-center justify-center bg-gray-50 px-6">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-          {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <div className="h-12 w-12 rounded-full bg-red-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
+        {error && (
+          <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg flex items-center gap-2">
+            <ShieldCheck size={16} />
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="relative group">
+            <input
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email address"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+            />
           </div>
 
-          <h2 className="text-center text-2xl font-bold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="text-center text-sm text-gray-500 mt-1">
-            Enter your credentials to continue
-          </p>
+          <div className="relative group">
+            <input
+              name="password"
+              type="password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
+            />
+          </div>
 
-          {error && (
-            <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-              {error}
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <Link to="/forgot-password" size="sm" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+              Forgot password?
+            </Link>
+          </div>
 
-          <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
-              </label>
-              <input
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              />
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
-                />
-                Remember me
-              </label>
-              <Link
-                to="/forgot-password"
-                className="text-red-600 hover:text-red-700 font-medium"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
+            <Link to="/register" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+              Create account
+            </Link>
             <button
               type="submit"
-              className="w-full rounded-lg bg-red-600 py-3 text-sm font-semibold text-white hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              disabled={isLoading}
+              className={`w-full sm:w-auto px-8 py-2.5 rounded-full font-semibold text-sm transition-all ${isLoading
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
+                }`}
             >
-              Sign In
+              {isLoading ? "Signing in..." : "Next"}
             </button>
-          </form>
+          </div>
+        </form>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Don’t have an account?{" "}
-            <Link
-              to="/register"
-              className="font-medium text-red-600 hover:text-red-700"
-            >
-              Sign up
-            </Link>
-          </p>
+        <div className="mt-12 text-[12px] text-gray-500 flex justify-between items-center">
+          <div className="flex gap-4">
+            <span>English (United States)</span>
+          </div>
+          <div className="flex gap-4">
+            <span>Help</span>
+            <span>Privacy</span>
+            <span>Terms</span>
+          </div>
         </div>
       </div>
     </div>

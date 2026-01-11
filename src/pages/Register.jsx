@@ -1,9 +1,9 @@
-// src/pages/Register.jsx
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Video } from "lucide-react";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,180 +15,117 @@ const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, register } = useAuth();
   const navigate = useNavigate();
-  
-  // Redirect if user is already logged in
+
   useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
+    if (user) navigate("/");
   }, [user, navigate]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      setIsSubmitting(false);
-      return;
+      return toast.error("Passwords do not match");
     }
 
+    setIsSubmitting(true);
     try {
       await register(formData.username, formData.email, formData.password);
-      //   toast.success("Registration successful! Redirecting...", {
-      //     position: "top-right",
-      //     autoClose: 2000,
-      //   });
-      // No need to manually navigate here if your AuthContext already does it
+      toast.success("Account created successfully!");
     } catch (err) {
-      toast.error(err.message || "Registration failed", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error(err.message || "Registration failed");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div>
-            <div className="mx-auto h-12 w-12 rounded-full bg-red-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
-            <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
-              Create your account
-            </h2>
+    <div className="min-h-[90vh] flex items-center justify-center p-4 bg-white">
+      <div className="w-full max-w-[450px] border border-gray-200 rounded-lg p-8 sm:p-10 shadow-sm animate-fade-in text-center sm:text-left">
+        {/* Logo and Header */}
+        <div className="flex flex-col items-center sm:items-start mb-8">
+          <div className="flex items-center gap-1 mb-2">
+            <Video size={32} fill="red" stroke="red" />
+            <span className="text-2xl font-bold tracking-tighter text-gray-900">MyTube</span>
+          </div>
+          <h1 className="text-2xl font-semibold text-gray-900 mt-2">Create a Google Account</h1>
+          <p className="text-gray-600 mt-1">Enter your details to get started</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="group">
+            <input
+              name="username"
+              type="text"
+              required
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Username"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
           </div>
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              {/* Username field */}
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Username
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="input"
-                  placeholder="Enter your username"
-                />
-              </div>
+          <div className="group">
+            <input
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email address"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
 
-              {/* Email field */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Email address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="input"
-                  placeholder="Enter your email"
-                />
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input
+              name="password"
+              type="password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+            <input
+              name="confirmPassword"
+              type="password"
+              required
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Use 8 or more characters with a mix of letters, numbers & symbols</p>
 
-              {/* Password field */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="input"
-                  placeholder="Enter your password"
-                />
-              </div>
-
-              {/* Confirm Password field */}
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="input"
-                  placeholder="Confirm your password"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`w-full py-3 px-4 rounded-md shadow-sm text-sm font-medium text-white ${
-                  isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
+            <Link to="/login" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
+              Sign in instead
+            </Link>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full sm:w-auto px-8 py-2.5 rounded-full font-semibold text-sm transition-all ${isSubmitting
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
                 }`}
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center">
-                    <span className="spinner mr-2"></span>
-                    Registering...
-                  </span>
-                ) : (
-                  "Register"
-                )}
-              </button>
-            </div>
-          </form>
+            >
+              {isSubmitting ? "Creating..." : "Next"}
+            </button>
+          </div>
+        </form>
 
-          <div className="text-center mt-6">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="font-medium text-red-600 hover:text-red-500"
-              >
-                Sign in
-              </Link>
-            </p>
+        <div className="mt-12 text-[12px] text-gray-500 flex justify-between items-center">
+          <div className="flex gap-4">
+            <span>English (United States)</span>
+          </div>
+          <div className="flex gap-4">
+            <span>Help</span>
+            <span>Privacy</span>
+            <span>Terms</span>
           </div>
         </div>
       </div>
