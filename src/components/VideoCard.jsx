@@ -42,6 +42,24 @@ const VideoCard = ({ video }) => {
     }
   };
 
+  const handleWatchLater = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!token) return toast.error("Please login to use Watch Later");
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/users/watch-later/${video._id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(res.data.message || "Watch Later updated");
+      setIsMenuOpen(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update Watch Later");
+    }
+  };
+
   const handleShare = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -171,7 +189,7 @@ const VideoCard = ({ video }) => {
           {/* Dropdown Menu */}
           {isMenuOpen && (
             <div className="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
-              <button onClick={handleSave} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+              <button onClick={handleWatchLater} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
                 <Clock size={16} />
                 <span>Save to Watch later</span>
               </button>
