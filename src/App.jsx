@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import EditVideo from "./pages/EditVideo";
 import Search from "./pages/Search";
 import LikedVideos from "./pages/LikedVideos";
+import History from "./pages/History";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
@@ -42,6 +43,7 @@ function AppContent() {
               <Route path="/search" element={<Search />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="/liked-videos" element={<LikedVideos />} />
+                <Route path="/history" element={<History />} />
               </Route>
             </Routes>
           </div>
