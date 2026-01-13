@@ -38,19 +38,40 @@ const Home = () => {
   const fetchVideos = async () => {
     try {
       setLoading(true);
-      const params = {
-        search: searchQuery,
-        limit: limit,
-      };
+      let res;
 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/videos`, {
-        params,
-      });
+      if (activeCategory === "Watched") {
+        if (!user) {
+          setVideos([]);
+          setLoading(false);
+          toast.info("Please login to view watch history");
+          return;
+        }
+        res = await axios.get(`${import.meta.env.VITE_API_URL}/api/videos/history/all`, {
+          params: { limit },
+          headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+        });
+      } else {
+        const params = {
+          search: searchQuery,
+          limit: limit,
+          category: activeCategory !== "All" && activeCategory !== "Recently uploaded" ? activeCategory : undefined,
+        };
+
+        res = await axios.get(`${import.meta.env.VITE_API_URL}/api/videos`, {
+          params,
+        });
+      }
+
       setVideos(res.data.data || []);
       setError(null);
     } catch (err) {
+      console.error(err);
       setError(err.response?.data?.message || err.message || "Failed to fetch videos");
-      toast.error("Failed to load videos");
+      // Only show toast for actual errors, not auth info
+      if (activeCategory !== "Watched" || user) {
+        toast.error("Failed to load videos");
+      }
     } finally {
       setLoading(false);
     }
@@ -58,7 +79,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchVideos();
-  }, [searchQuery, limit]);
+  }, [searchQuery, limit, activeCategory]);
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
@@ -76,8 +97,8 @@ const Home = () => {
               key={cat}
               onClick={() => handleCategoryClick(cat)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-200 ${activeCategory === cat
-                  ? "bg-black text-white"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                 }`}
             >
               {cat}

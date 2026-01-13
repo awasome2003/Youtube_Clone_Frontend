@@ -142,7 +142,17 @@ const VideoDetails = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success(res.data.message);
-      fetchVideo();
+
+      // Toggle subscription state locally based on response or current state
+      setVideo(prev => ({
+        ...prev,
+        userId: {
+          ...prev.userId,
+          subscribers: res.data.isSubscribed
+            ? [...(prev.userId.subscribers || []), user._id]
+            : (prev.userId.subscribers || []).filter(id => id !== user._id)
+        }
+      }));
     } catch (err) {
       toast.error("Error subscribing");
     }
