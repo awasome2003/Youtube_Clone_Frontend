@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Video, ShieldCheck } from "lucide-react";
+import { Video, ShieldCheck, Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -35,82 +35,105 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center p-4 bg-white">
-      <div className="w-full max-w-[450px] border border-gray-200 rounded-lg p-8 sm:p-10 shadow-sm animate-fade-in">
-        {/* Logo and Header */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center gap-1 mb-2">
-            <Video size={32} fill="red" stroke="red" />
-            <span className="text-2xl font-bold tracking-tighter text-gray-900">MyTube</span>
-          </div>
-          <h1 className="text-2xl font-semibold text-gray-900 mt-2">Sign in</h1>
-          <p className="text-gray-600 mt-1">to continue to MyTube</p>
-        </div>
+    <div className="flex items-center justify-center p-6 min-h-[calc(100vh-80px)]">
+      <div className="w-full max-w-[480px]">
+        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] animate-fade-in">
 
-        {error && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg flex items-center gap-2">
-            <ShieldCheck size={16} />
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative group">
-            <input
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email address"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
-            />
+          {/* Logo and Header */}
+          <div className="flex flex-col items-center mb-10 text-center">
+            <div className="p-4 bg-gradient-to-tr from-red-600 to-rose-400 rounded-2xl shadow-lg shadow-red-500/20 mb-6 group hover:scale-110 transition-transform duration-500">
+              <Video size={40} className="text-white fill-white/20" />
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-4">
+              <Sparkles size={14} className="text-yellow-400" />
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Next-Gen Video Platform</span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tight text-white mb-2">Welcome Back</h1>
+            <p className="text-gray-400 text-sm">Please enter your details to sign in</p>
           </div>
 
-          <div className="relative group">
-            <input
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-gray-400"
-            />
-          </div>
+          {error && (
+            <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-2xl flex items-center gap-3 animate-shake">
+              <ShieldCheck size={18} className="shrink-0" />
+              <p className="font-medium">{error}</p>
+            </div>
+          )}
 
-          <div className="flex items-center justify-between">
-            <Link to="/forgot-password" size="sm" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
-              Forgot password?
-            </Link>
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-blue-500 transition-colors">
+                  <Mail size={18} />
+                </div>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com"
+                  className="w-full pl-11 pr-4 py-4 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                />
+              </div>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-            <Link to="/register" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
-              Create account
-            </Link>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Password</label>
+                <Link to="/forgot-password" size="sm" className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors">
+                  Forgot?
+                </Link>
+              </div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-blue-500 transition-colors">
+                  <Lock size={18} />
+                </div>
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-4 py-4 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                />
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full sm:w-auto px-8 py-2.5 rounded-full font-semibold text-sm transition-all ${isLoading
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
-                }`}
+              className="w-full mt-4 group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-2xl font-bold text-base transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Signing in..." : "Next"}
+              <div className="relative flex items-center justify-center gap-2">
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </div>
             </button>
-          </div>
-        </form>
+          </form>
 
-        <div className="mt-12 text-[12px] text-gray-500 flex justify-between items-center">
-          <div className="flex gap-4">
-            <span>English (United States)</span>
+          <div className="mt-10 text-center">
+            <p className="text-gray-500 text-sm">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-white font-bold hover:text-blue-400 transition-colors">
+                Sign up for free
+              </Link>
+            </p>
           </div>
-          <div className="flex gap-4">
-            <span>Help</span>
-            <span>Privacy</span>
-            <span>Terms</span>
-          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 flex justify-center gap-6 text-[11px] font-bold text-gray-600 uppercase tracking-widest">
+          <span className="hover:text-gray-400 cursor-pointer transition-colors">Help</span>
+          <span className="hover:text-gray-400 cursor-pointer transition-colors">Privacy</span>
+          <span className="hover:text-gray-400 cursor-pointer transition-colors">Terms</span>
         </div>
       </div>
     </div>

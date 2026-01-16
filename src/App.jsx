@@ -14,6 +14,7 @@ import Search from "./pages/Search";
 import LikedVideos from "./pages/LikedVideos";
 import History from "./pages/History";
 import WatchLater from "./pages/WatchLater";
+import PlaylistDetails from "./pages/PlaylistDetails";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
@@ -25,31 +26,38 @@ function AppContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="flex">
-        <Sidebar isOpen={isSidebarOpen} />
-        <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "ml-60" : "ml-0 lg:ml-[72px]"}`}>
-          <div className="p-4 pt-4">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-              <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
-              <Route path="/video/:id" element={<VideoDetails />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/video/:id/edit" element={<EditVideo />} />
-                <Route path="/upload" element={<UploadVideo />} />
-              </Route>
-              <Route path="/profile/:userId" element={<Profile />} />
-              <Route path="/search" element={<Search />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/liked-videos" element={<LikedVideos />} />
-                <Route path="/watch-later" element={<WatchLater />} />
-                <Route path="/history" element={<History />} />
-              </Route>
-            </Routes>
-          </div>
-        </main>
+    <div className="min-h-screen bg-[#0f0f0f] relative text-white">
+      {/* Background Decorative Elements */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full animate-pulse z-0 pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full animate-pulse delay-700 z-0 pointer-events-none" />
+
+      <div className="relative z-10">
+        <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <div className="flex pt-14">
+          <Sidebar isOpen={isSidebarOpen} />
+          <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "ml-60" : "ml-0 lg:ml-[72px]"}`}>
+            <div className="p-4 pt-4">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+                <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
+                <Route path="/video/:id" element={<VideoDetails />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/video/:id/edit" element={<EditVideo />} />
+                  <Route path="/upload" element={<UploadVideo />} />
+                </Route>
+                <Route path="/profile/:userId" element={<Profile />} />
+                <Route path="/search" element={<Search />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/liked-videos" element={<LikedVideos />} />
+                  <Route path="/watch-later" element={<WatchLater />} />
+                  <Route path="/history" element={<History />} />
+                  <Route path="/playlist/:id" element={<PlaylistDetails />} />
+                </Route>
+              </Routes>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
@@ -69,7 +77,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
+        theme="dark"
       />
       <Router>
         <AuthProvider>

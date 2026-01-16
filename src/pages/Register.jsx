@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
-import { Video } from "lucide-react";
+import { Video, User, Mail, Lock, UserPlus, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -42,91 +42,138 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-[90vh] flex items-center justify-center p-4 bg-white">
-      <div className="w-full max-w-[450px] border border-gray-200 rounded-lg p-8 sm:p-10 shadow-sm animate-fade-in text-center sm:text-left">
-        {/* Logo and Header */}
-        <div className="flex flex-col items-center sm:items-start mb-8">
-          <div className="flex items-center gap-1 mb-2">
-            <Video size={32} fill="red" stroke="red" />
-            <span className="text-2xl font-bold tracking-tighter text-gray-900">MyTube</span>
-          </div>
-          <h1 className="text-2xl font-semibold text-gray-900 mt-2">Create a Google Account</h1>
-          <p className="text-gray-600 mt-1">Enter your details to get started</p>
-        </div>
+    <div className="flex items-center justify-center p-6 min-h-[calc(100vh-80px)]">
+      <div className="w-full max-w-[550px]">
+        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] animate-fade-in">
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="group">
-            <input
-              name="username"
-              type="text"
-              required
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Username"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
+          {/* Logo and Header */}
+          <div className="flex flex-col items-center mb-10 text-center">
+            <div className="p-4 bg-gradient-to-tr from-purple-600 to-indigo-400 rounded-2xl shadow-lg shadow-purple-500/20 mb-6 group hover:scale-110 transition-transform duration-500">
+              <Video size={40} className="text-white fill-white/20" />
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-4">
+              <Sparkles size={14} className="text-yellow-400" />
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Join the Future</span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tight text-white mb-2">Create Account</h1>
+            <p className="text-gray-400 text-sm">Join millions of creators worldwide</p>
           </div>
 
-          <div className="group">
-            <input
-              name="email"
-              type="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email address"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Username</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                    <User size={18} />
+                  </div>
+                  <input
+                    name="username"
+                    type="text"
+                    required
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="creator_99"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all font-medium"
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
-              name="password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-            <input
-              name="confirmPassword"
-              type="password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
-          <p className="text-xs text-gray-500 mt-1">Use 8 or more characters with a mix of letters, numbers & symbols</p>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email Address</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                    <Mail size={18} />
+                  </div>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="you@creators.com"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all font-medium"
+                  />
+                </div>
+              </div>
+            </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
-            <Link to="/login" className="text-sm font-semibold text-blue-600 hover:text-blue-700">
-              Sign in instead
-            </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Password</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                    <Lock size={18} />
+                  </div>
+                  <input
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Confirm</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-500 transition-colors">
+                    <ShieldCheck size={18} />
+                  </div>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/[0.05] border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all font-medium"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 px-2 py-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <p className="text-[11px] text-gray-500 font-medium">Password must be at least 8 characters</p>
+            </div>
+
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full sm:w-auto px-8 py-2.5 rounded-full font-semibold text-sm transition-all ${isSubmitting
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-                }`}
+              className="w-full mt-4 group relative overflow-hidden px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-2xl font-bold text-sm transition-all shadow-xl shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Creating..." : "Next"}
+              <div className="relative flex items-center justify-center gap-2 uppercase tracking-widest">
+                {isSubmitting ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>Create Account</span>
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </div>
             </button>
-          </div>
-        </form>
+          </form>
 
-        <div className="mt-12 text-[12px] text-gray-500 flex justify-between items-center">
-          <div className="flex gap-4">
-            <span>English (United States)</span>
+          <div className="mt-10 text-center">
+            <p className="text-gray-500 text-sm font-medium">
+              Already have an account?{" "}
+              <Link to="/login" className="text-white font-bold hover:text-purple-400 transition-colors whitespace-nowrap">
+                Sign in instead
+              </Link>
+            </p>
           </div>
-          <div className="flex gap-4">
-            <span>Help</span>
-            <span>Privacy</span>
-            <span>Terms</span>
-          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 flex justify-center gap-6 text-[11px] font-bold text-gray-600 uppercase tracking-widest">
+          <span className="hover:text-gray-400 cursor-pointer transition-colors">Help</span>
+          <span className="hover:text-gray-400 cursor-pointer transition-colors">Privacy</span>
+          <span className="hover:text-gray-400 cursor-pointer transition-colors">Terms</span>
         </div>
       </div>
     </div>

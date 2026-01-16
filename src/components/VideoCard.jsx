@@ -5,12 +5,14 @@ import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+import SaveToPlaylistModal from "./SaveToPlaylistModal";
 
 const VideoCard = ({ video }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const { token, user } = useAuth();
   const navigate = useNavigate();
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
 
   const isOwner = user?._id === video.userId?._id;
 
@@ -134,42 +136,44 @@ const VideoCard = ({ video }) => {
   return (
     <div className="flex flex-col gap-3 group">
       {/* Thumbnail */}
-      <Link to={`/video/${video._id}`} className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100">
+      <Link to={`/video/${video._id}`} className="relative aspect-video w-full overflow-hidden rounded-2xl bg-white/5 border border-white/5 group-hover:border-white/20 transition-all shadow-lg shadow-black/20">
         <img
           src={thumbnailUrl}
           alt={video.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 group-hover:rounded-none"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
         {video.duration && (
-          <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 text-[12px] font-medium text-white">
+          <div className="absolute bottom-2 right-2 rounded-lg bg-black/80 backdrop-blur-md px-2 py-1 text-[11px] font-bold text-white uppercase tracking-wider">
             {video.duration}
           </div>
         )}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       </Link>
 
       {/* Info Section */}
-      <div className="flex gap-3 px-1">
-        <Link to={`/profile/${video.userId?._id}`} className="flex-shrink-0 mt-0.5">
+      <div className="flex gap-3 px-1 mt-1">
+        <Link to={`/profile/${video.userId?._id}`} className="flex-shrink-0">
           <img
             src={avatarUrl}
             alt={video.userId?.username}
-            className="h-9 w-9 rounded-full object-cover"
+            className="h-9 w-9 rounded-full object-cover ring-2 ring-transparent group-hover:ring-white/10 transition-all shadow-md"
           />
         </Link>
         <div className="flex flex-1 flex-col overflow-hidden">
           <Link to={`/video/${video._id}`}>
-            <h3 className="line-clamp-2 text-[16px] font-bold leading-tight text-gray-900 group-hover:text-black">
+            <h3 className="line-clamp-2 text-[15px] font-black leading-tight text-white group-hover:text-blue-400 transition-colors">
               {video.title}
             </h3>
           </Link>
-          <div className="mt-1 flex flex-col text-[14px] text-gray-500">
-            <Link to={`/profile/${video.userId?._id}`} className="hover:text-gray-900 transition-colors truncate">
+          <div className="mt-1.5 flex flex-col text-[13px] text-gray-400 font-medium">
+            <Link to={`/profile/${video.userId?._id}`} className="hover:text-white transition-colors truncate flex items-center gap-1.5">
               {video.userId?.username || "Unknown Channel"}
+              <div className="w-3 h-3 bg-gray-600 rounded-full flex items-center justify-center text-[8px] text-white">✓</div>
             </Link>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 mt-0.5 opacity-80">
               <span>{formatViews(video.views || 0)} views</span>
-              <span className="text-[10px]">{" • "}</span>
+              <span className="text-[10px] opacity-40">{" • "}</span>
               <span>{getTimeAgo(video.createdAt)}</span>
             </div>
           </div>
@@ -181,39 +185,45 @@ const VideoCard = ({ video }) => {
               e.stopPropagation();
               setIsMenuOpen(!isMenuOpen);
             }}
-            className={`flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors ${isMenuOpen ? 'bg-gray-100 opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+            className={`flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-white ${isMenuOpen ? 'bg-white/10 opacity-100 shadow-xl' : 'opacity-0 group-hover:opacity-100'}`}
           >
             <MoreVertical size={18} />
           </button>
 
           {/* Dropdown Menu */}
           {isMenuOpen && (
-            <div className="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in zoom-in-95 duration-100 origin-top-right">
-              <button onClick={handleWatchLater} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+            <div className="absolute right-0 top-10 w-56 bg-[#1a1a1a]/95 backdrop-blur-xl rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-white/10 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-right overflow-hidden">
+              <button onClick={handleWatchLater} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 text-[14px] text-gray-300 font-medium hover:text-white transition-all">
                 <Clock size={16} />
                 <span>Save to Watch later</span>
               </button>
-              <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+              <button onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!token) return toast.error("Please login to save to playlist");
+                setIsPlaylistModalOpen(true);
+                setIsMenuOpen(false);
+              }} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 text-[14px] text-gray-300 font-medium hover:text-white transition-all">
                 <ListPlus size={16} />
                 <span>Save to playlist</span>
               </button>
-              <button onClick={handleDownload} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+              <button onClick={handleDownload} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 text-[14px] text-gray-300 font-medium hover:text-white transition-all">
                 <Download size={16} />
                 <span>Download</span>
               </button>
-              <button onClick={handleShare} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+              <button onClick={handleShare} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 text-[14px] text-gray-300 font-medium hover:text-white transition-all">
                 <Share2 size={16} />
                 <span>Share</span>
               </button>
 
               {isOwner && (
                 <>
-                  <div className="h-[1px] bg-gray-100 my-1" />
-                  <button onClick={handleEdit} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px] text-blue-600 font-medium">
+                  <div className="h-[1px] bg-white/5 my-2" />
+                  <button onClick={handleEdit} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-blue-500/10 text-[14px] text-blue-400 font-bold hover:text-blue-300 transition-all">
                     <Edit size={16} />
                     <span>Edit video</span>
                   </button>
-                  <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px] text-red-600 font-medium">
+                  <button onClick={handleDelete} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 text-[14px] text-red-500 font-bold hover:text-red-400 transition-all">
                     <Trash2 size={16} />
                     <span>Delete video</span>
                   </button>
@@ -222,12 +232,12 @@ const VideoCard = ({ video }) => {
 
               {!isOwner && (
                 <>
-                  <div className="h-[1px] bg-gray-100 my-1" />
-                  <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+                  <div className="h-[1px] bg-white/5 my-2" />
+                  <button className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 text-[14px] text-gray-400 font-medium hover:text-white-all">
                     <Ban size={16} />
                     <span>Not interested</span>
                   </button>
-                  <button className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-[14px]">
+                  <button className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 text-[14px] text-red-400 font-medium hover:text-red-300 transition-all">
                     <Flag size={16} />
                     <span>Report</span>
                   </button>
@@ -236,6 +246,18 @@ const VideoCard = ({ video }) => {
             </div>
           )}
         </div>
+
+        {isPlaylistModalOpen && (
+          <SaveToPlaylistModal
+            isOpen={isPlaylistModalOpen}
+            onClose={(e) => {
+              if (e && e.preventDefault) { e.preventDefault(); e.stopPropagation(); }
+              setIsPlaylistModalOpen(false);
+            }}
+            videoId={video._id}
+            token={token}
+          />
+        )}
       </div>
     </div>
   );

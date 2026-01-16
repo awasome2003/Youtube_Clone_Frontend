@@ -1,21 +1,18 @@
-
 @import "tailwindcss";
-
-@theme {
-  --color-yt-red: #ff0000;
-  --color-yt-black: #0f0f0f;
-  --color-yt-gray-hover: #f2f2f2;
-}
 
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --yt-black: #0f0f0f;
+  --yt-red: #ff0000;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: white;
-  color: #0f0f0f;
+  background-color: var(--yt-black);
+  color: #ffffff;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom scrollbar */
@@ -28,53 +25,74 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #aaa;
+  background: #2a2a2a;
   border-radius: 10px;
-  border: 2px solid white;
+  border: 2px solid var(--yt-black);
 }
 
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: #717171;
+  background: #3f3f3f;
 }
 
 /* No scrollbar utility */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-2xl;
+}
+
+.glass-action {
+  @apply bg-white/5 backdrop-blur-3xl border border-white/10 hover:bg-white/10 transition-all;
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Video Player Aspect Ratio */
-.video-container {
+.aspect-video-container {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
-  height: 0;
-  overflow: hidden;
-  border-radius: 12px;
-  background: black;
-}
-
-.video-container video {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 9;
+  background: black;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Channel Header Gradient */
-.channel-banner {
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+/* Modern Typography */
+.font-black {
+  font-weight: 900;
+}
+
+/* Glow Effects */
+.shadow-glow {
+  text-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+}
+
+.shadow-glow-red {
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
 }
