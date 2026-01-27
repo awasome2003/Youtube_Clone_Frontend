@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ListMusic, Home, Compass, PlaySquare, Clock, ThumbsUp, ChevronRight, History, Library, User, Clapperboard, Flame, Music2, Gamepad2, Trophy, Settings, Flag, HelpCircle, MessageSquarePlus } from "lucide-react";
+import { ListMusic, Home, Compass, PlaySquare, Clock, ThumbsUp, ChevronRight, History, Library, User, Clapperboard, Flame, Music2, Gamepad2, Trophy, Settings, Flag, HelpCircle, MessageSquarePlus, Shield } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -162,6 +162,9 @@ const Sidebar = ({ isOpen }) => {
                 <SidebarItem icon={Flag} label="Report history" path="/report" active={location.pathname === "/report"} />
                 <SidebarItem icon={HelpCircle} label="Help" path="/help" active={location.pathname === "/help"} />
                 <SidebarItem icon={MessageSquarePlus} label="Send feedback" path="/feedback" active={location.pathname === "/feedback"} />
+                {user?.role === 'admin' && (
+                    <SidebarItem icon={Shield} label="Admin Console" path="/admin" active={location.pathname.startsWith("/admin")} />
+                )}
             </div>
 
             <div className="px-5 py-6 text-[11px] text-gray-500 font-medium leading-relaxed">
@@ -178,7 +181,7 @@ const Sidebar = ({ isOpen }) => {
                     <a href="#" className="hover:text-white transition-colors">Terms</a>
                     <a href="#" className="hover:text-white transition-colors">Privacy</a>
                 </div>
-                <p className="mt-4 text-gray-600 font-normal">© 2026 MyTube Premium</p>
+                <p className="mt-4 text-gray-600 font-normal">© 2026 Streamly Premium</p>
             </div>
         </aside>
     );

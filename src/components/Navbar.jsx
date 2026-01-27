@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, Bell, Upload, Menu, User, Mic, Video, MoreVertical } from "lucide-react";
+import { Search, Bell, Upload, Menu, User, Mic, Video, MoreVertical, Shield, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import NotificationDropdown from "./NotificationDropdown";
@@ -71,7 +71,12 @@ const Navbar = ({ onMenuClick }) => {
             <Video size={30} fill="red" stroke="red" className="group-hover:scale-105 transition-transform" />
             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
           </div>
-          <span className="text-xl font-bold tracking-tighter text-white hidden sm:block">MyTube</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1">
+            <span className="text-xl font-bold tracking-tighter text-white hidden sm:block">Streamly</span>
+            {location.pathname.startsWith('/admin') && (
+              <span className="bg-blue-500/10 text-blue-400 text-[10px] font-black px-1.5 py-0.5 rounded border border-blue-500/20 tracking-widest uppercase ml-1">Admin</span>
+            )}
+          </div>
         </Link>
       </div>
 
@@ -111,6 +116,22 @@ const Navbar = ({ onMenuClick }) => {
 
         {user ? (
           <>
+            {user.role === 'admin' && (
+              <Link
+                to="/admin"
+                className={`p-2.5 rounded-full transition-all duration-300 hidden sm:flex items-center gap-2 group relative ${location.pathname.startsWith('/admin')
+                  ? "bg-blue-500/20 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)] border border-blue-500/30"
+                  : "text-white hover:bg-white/10 hover:text-blue-400"
+                  }`}
+                title="Admin Dashboard"
+              >
+                <LayoutDashboard size={20} className={location.pathname.startsWith('/admin') ? 'animate-pulse' : ''} />
+                {location.pathname.startsWith('/admin') && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full ring-2 ring-[#0f0f0f]"></span>
+                )}
+              </Link>
+            )}
+
             <Link
               to="/upload"
               className="p-2.5 rounded-full hover:bg-white/10 transition-colors hidden sm:flex items-center gap-2 group text-white"
@@ -184,6 +205,16 @@ const Navbar = ({ onMenuClick }) => {
                         <User className="mr-4 h-5 w-5 text-gray-400" />
                         Your channel
                       </Link>
+                      {user.role === 'admin' && (
+                        <Link
+                          to="/admin"
+                          className="flex items-center px-4 py-2.5 text-[14px] text-gray-300 hover:bg-white/10 transition-colors"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                        >
+                          <Shield className="mr-4 h-5 w-5 text-purple-400" />
+                          Admin Console
+                        </Link>
+                      )}
                       <Link
                         to="/upload"
                         className="flex items-center px-4 py-2.5 text-[14px] text-gray-300 hover:bg-white/10 transition-colors sm:hidden"

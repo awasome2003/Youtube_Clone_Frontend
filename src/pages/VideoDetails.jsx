@@ -321,16 +321,27 @@ const VideoDetails = () => {
         <div className="flex-1 min-w-0">
           {/* Player Container */}
           <div className="relative group aspect-video w-full rounded-[32px] overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.6)] border border-white/5 bg-black">
-            <video
-              ref={videoRef}
-              src={videoUrl}
-              controls
-              autoPlay
-              className="w-full h-full object-contain"
-              poster={video.thumbnailUrl ? `${import.meta.env.VITE_API_URL}${video.thumbnailUrl}` : `https://picsum.photos/seed/${video._id}/1280/720`}
-            >
-              Your browser does not support the video tag.
-            </video>
+            {video.videoUrl?.includes("youtube.com") || video.videoUrl?.includes("youtu.be") ? (
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${video.videoUrl.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1]}?autoplay=1`}
+                title={video.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                controls
+                autoPlay
+                className="w-full h-full object-contain"
+                poster={video.thumbnailUrl ? (video.thumbnailUrl.startsWith('http') ? video.thumbnailUrl : `${import.meta.env.VITE_API_URL}${video.thumbnailUrl}`) : `https://picsum.photos/seed/${video._id}/1280/720`}
+              >
+                Your browser does not support the video tag.
+              </video>
+            )}
           </div>
 
           {/* Title and Metadata */}

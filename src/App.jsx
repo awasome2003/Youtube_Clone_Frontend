@@ -15,6 +15,11 @@ import LikedVideos from "./pages/LikedVideos";
 import History from "./pages/History";
 import WatchLater from "./pages/WatchLater";
 import PlaylistDetails from "./pages/PlaylistDetails";
+import Shorts from "./pages/Shorts";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminVideos from "./pages/admin/AdminVideos";
+import SupadataImport from "./pages/admin/SupadataImport";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
@@ -39,6 +44,7 @@ function AppContent() {
             <div className="p-4 pt-4">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/shorts" element={<Shorts />} />
                 <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
                 <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
                 <Route path="/video/:id" element={<VideoDetails />} />
@@ -53,6 +59,18 @@ function AppContent() {
                   <Route path="/watch-later" element={<WatchLater />} />
                   <Route path="/history" element={<History />} />
                   <Route path="/playlist/:id" element={<PlaylistDetails />} />
+                </Route>
+
+                {/* Admin Routes */}
+                <Route element={<ProtectedRoute />}>
+                  {user?.role === "admin" && (
+                    <>
+                      <Route path="/admin" element={<AdminDashboard />} />
+                      <Route path="/admin/users" element={<AdminUsers />} />
+                      <Route path="/admin/videos" element={<AdminVideos />} />
+                      <Route path="/admin/import" element={<SupadataImport />} />
+                    </>
+                  )}
                 </Route>
               </Routes>
             </div>

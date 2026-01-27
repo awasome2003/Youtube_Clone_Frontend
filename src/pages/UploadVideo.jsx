@@ -7,7 +7,7 @@ import axios from "axios";
 import { Upload, X, FileVideo, Info, ChevronRight, CheckCircle2, Sparkles, Clapperboard } from "lucide-react";
 
 const UploadVideo = () => {
-  const [formData, setFormData] = useState({ title: "", description: "", tags: "" });
+  const [formData, setFormData] = useState({ title: "", description: "", tags: "", isShort: false });
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +38,7 @@ const UploadVideo = () => {
     data.append("description", formData.description);
     data.append("userId", user._id);
     data.append("tags", formData.tags);
+    data.append("isShort", formData.isShort);
 
     setIsSubmitting(true);
     setStep(3);
@@ -161,6 +162,21 @@ const UploadVideo = () => {
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-indigo-500/50 outline-none text-gray-300 font-bold text-sm transition-all"
                       placeholder="Separated by commas (e.g. cinema, tech, 2026)"
                     />
+                  </div>
+
+                  <div className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-2xl group/short cursor-pointer hover:bg-white/10 transition-all" onClick={() => setFormData({ ...formData, isShort: !formData.isShort })}>
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-xl transition-all duration-300 ${formData.isShort ? 'bg-red-600/20 text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.3)]' : 'bg-white/10 text-gray-400'}`}>
+                        <Clapperboard size={24} className={formData.isShort ? "animate-pulse" : ""} />
+                      </div>
+                      <div>
+                        <h4 className="text-white font-bold text-lg leading-tight uppercase tracking-tighter">Mark as Short</h4>
+                        <p className="text-gray-500 text-xs font-medium">Vertical format optimized for swipe feeds</p>
+                      </div>
+                    </div>
+                    <div className={`w-14 h-8 rounded-full p-1 transition-all duration-300 ${formData.isShort ? 'bg-red-600' : 'bg-white/10'}`}>
+                      <div className={`w-6 h-6 bg-white rounded-full transition-transform duration-300 shadow-md ${formData.isShort ? 'translate-x-6' : 'translate-x-0'}`} />
+                    </div>
                   </div>
                 </div>
               </div>
